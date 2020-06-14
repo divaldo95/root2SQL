@@ -5,9 +5,9 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(root2SQL)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+#set(CMAKE_CXX_STANDARD 17)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#set(CMAKE_CXX_EXTENSIONS OFF)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
@@ -37,6 +37,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hpp)
 # Add the executable
 #
 add_executable(root2SQL root2SQL.cpp ${sources} ${headers})
+#target_compile_features(root2SQL PRIVATE cxx_std_17)
 target_link_libraries(root2SQL ${ROOT_LIBRARIES})
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

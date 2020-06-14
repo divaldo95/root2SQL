@@ -26,7 +26,7 @@ SQLGenerator::~SQLGenerator()
 {
 }
 
-bool SQLGenerator::OpenTFile(std::filesystem::path path)
+bool SQLGenerator::OpenTFile(std::experimental::filesystem::path path)
 {
     inFile = TFile::Open(path.c_str());
     path.replace_extension(".sql");
@@ -94,13 +94,13 @@ void SQLGenerator::SetDatabaseName(std::string dbname)
 
 void SQLGenerator::OpenDirectory(std::string path)
 {
-    if(!std::filesystem::exists(std::filesystem::path(path)))
+    if(!std::experimental::filesystem::exists(std::experimental::filesystem::path(path)))
     {
         std::cout << "Directory does not exists. Skipping." << std::endl;
         return;
     }
 
-    for (const auto & entry : std::filesystem::directory_iterator(path))
+    for (const auto & entry : std::experimental::filesystem::directory_iterator(path))
     {
         //std::cout << entry.path() << std::endl;
         if(entry.path().extension().compare(".root") == 0) //only read ROOT files
@@ -113,8 +113,8 @@ void SQLGenerator::OpenDirectory(std::string path)
 
 void SQLGenerator::AppendFile(std::string filename)
 {
-    std::filesystem::path path(filename);
-    if(!std::filesystem::exists(path))
+    std::experimental::filesystem::path path(filename);
+    if(!std::experimental::filesystem::exists(path))
     {
         std::cout << "File does not exists. Skipping." << std::endl;
         return;
@@ -150,6 +150,13 @@ void SQLGenerator::GenerateCTCommand()
         outFile << "\t" << cols[i].col_name << " " << cols[i].col_type << ",\n";
     }
     outFile << "\t" << cols[cols.size() - 1].col_name << " " << cols[cols.size() - 1].col_type << "\n);\n";
+    
+    //Description table
+    outFile << "CREATE TABLE ";
+    if(useIfnotExists) outFile << "IF NOT EXISTS ";
+    outFile << "detectors(\n\tID INT AUTO_INCREMENT PRIMARY KEY,\n\t";
+    outFile << "detector_table VARCHAR(100),\n\t";
+    outFile << "detector_description VARCHAR(200)\n);\n";
 }
 
 void SQLGenerator::GenerateIICommand()
@@ -183,6 +190,8 @@ void SQLGenerator::GenerateIICommand()
         if(cols[cols.size() - 1].col_type.compare(SQL_INT_TYPE) == 0) outFile << cols[cols.size() - 1].i_value << ");\n";
         else outFile << cols[cols.size() - 1].d_value << ");\n";
     }
+    outFile << "INSERT INTO detectors (detector_table, detector_description) VALUES (\"";
+    outFile << table << "\", \"" << table << "\");\n"; //For now, the description is the same as table name
 }
 
 void SQLGenerator::GenerateSQL()

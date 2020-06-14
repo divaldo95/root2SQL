@@ -39,5 +39,10 @@ Generating an SQL script which uses 'test' as SCHEMA and uses 'testtable' as TAB
 ```
 
 # Changelog
+## 2020-06-14
+* Temporary branch using experimental/filesystem
+* Fixed build on Ubuntu by CMakeLists changes (Root does not like c++17 standards set up by cmake, tested on Ubuntu 18.04)
+* Added detector description table
+
 ## 2020-06-12
 * Initial version
